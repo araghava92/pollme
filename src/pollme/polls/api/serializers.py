@@ -37,7 +37,7 @@ class ChoiceSerializer(ModelSerializer):
         """
         Creates and returns a new `choice` instance, given the validated data.
         """
-        return Question.objects.create(**validated_data)
+        return Choice.objects.create(**validated_data)
 
     class Meta:
         model = Choice
