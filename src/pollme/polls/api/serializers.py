@@ -9,17 +9,36 @@ from ..models import Question, Choice
 class QuestionListSerializer(ModelSerializer):
     """
     This serializer serializes the Question model
-    It should also include a field "choices" that will serialize all the
+    It includes a field "choices" that will serialize all the
         choices for a question
-    You well need a SerializerMethodField for choices,
-        http://www.django-rest-framework.org/api-guide/fields/#serializermethodfield
-    Reference this stack overflow for the choices:
-        https://stackoverflow.com/questions/33945148/return-nested-serializer-in-serializer-method-field
     """
-    pass
+    choices = SerializerMethodField()
+
+    def get_choices(self, obj):
+        choices = obj.choice_set.all()
+        return ChoiceSerializer(choices, many=True).data
+
+    def create(self, validated_data):
+        """
+        Creates and return a new `question` instance, given the validated data.
+        """
+        return Question.objects.create(**validated_data)
+
+    class Meta:
+        model = Question
+        fields = ["id", "text", "pub_date", "choices"]
 
 class ChoiceSerializer(ModelSerializer):
     """
     This serializes the Choice model
     """
-    pass
+
+    def create(self, validated_data):
+        """
+        Creates and returns a new `choice` instance, given the validated data.
+        """
+        return Question.objects.create(**validated_data)
+
+    class Meta:
+        model = Choice
+        fields = ["choice_text", "votes"]

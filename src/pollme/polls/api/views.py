@@ -3,6 +3,7 @@ from rest_framework.response import Response
 
 #get models
 from ..models import Question, Choice
+from .serializers import QuestionListSerializer
 
 #get serializers
 from .serializers import (
@@ -13,11 +14,14 @@ class QuestionListAPIView(APIView):
 
     def get(self, request, format=None):
         """
-        This should list all questions and their choices
+        returns questions and their choices
         Feel free to use DRF generic class based views
         Otherwise it subclasses APIView
         """
-        pass
+        questions = Question.objects.all()
+        serializer = QuestionListSerializer(questions, many=True)
+        return Response(serializer.data)
+
 
     def post(self, request, format=None):
         """nothing required for lab 5"""
